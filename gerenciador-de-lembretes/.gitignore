@@ -21,38 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-55555
-
-
-DO $$
-    DECLARE
-        cur_delete REFCURSOR;
-        v_tupla RECORD;
-    BEGIN
-        OPEN cur_delete SCROLL FOR 
-        SELECT * FROM tb_students_data;
-        LOOP
-        FETCH cur_delete INTO v_tupla;
-        EXIT WHEN NOT FOUND;
-        IF v_tupla.stutendid ISNULL 
-                        OR v_tupla.salary ISNULL
-                        OR v_tupla.mother_edu ISNULL
-                        OR v_tupla.father_edu ISNULL
-                        OR v_tupla.prep_study ISNULL
-                        OR v_tupla.prep_exam ISNULL
-                        OR v_tupla.grade ISNULL
-                        THEN 
-                    DELETE FROM tb_students_data WHERE
-                        CURRENT OF cur_delete;
-        END IF;
-                END LOOP;
-
-        LOOP
-        FETCH BACKWARD FROM cur_delete INTO v_tupla;
-        EXIT WHEN NOT FOUND;
-        RAISE NOTICE '%', v_tupla;
-        END LOOP;
-
-        CLOSE cur_delete;
-    END;
-$$
