@@ -21,3 +21,28 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+DO $$
+        DECLARE
+                v_line_students INT;
+                v_count_students INT := 0;
+                v_alone_study INT := 1;
+                v_fail_grade INT := 0;
+                cur_count_studens_alone_approved CURSOR(alone_study INT, fail_grade INT) FOR
+                        SELECT * FROM tb_students_data  
+                        WHERE prep_study = alone_study AND grade > fail_grade;
+        BEGIN
+                OPEN cur_count_studens_alone_approved(
+                        alone_study := v_alone_study,
+                        fail_grade := v_fail_grade
+                );
+                LOOP
+                        FETCH cur_count_studens_alone_approved INTO v_line_students;
+                        EXIT WHEN NOT FOUND;
+                        v_count_students := v_count_students + 1;
+                END LOOP;
+                IF v_count_students = 0 THEN v_count_students := -1;
+                END IF;
+                RAISE NOTICE '%', v_count_students;
+                CLOSE cur_count_studens_alone_approved;
+        END;
+$$
